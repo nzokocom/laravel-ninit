@@ -1,0 +1,50 @@
+{
+    "name": "nzoko/ninit",
+    "description": "Web installer framework starting with Laravel (Ninit).",
+    "type": "library",
+    "keywords": [
+        "laravel",
+        "installer",
+        "wizard",
+        "setup",
+        "ninit",
+        "nzoko",
+        "livewire"
+    ],
+    "license": "MIT",
+    "homepage": "https://github.com/nzokocom/laravel-ninit",
+    "support": {
+        "issues": "https://github.com/nzokocom/laravel-ninit/issues",
+        "source": "https://github.com/nzokocom/laravel-ninit"
+    },
+    "authors": [
+        {
+            "name": "CG"
+        }
+    ],
+    "require": {
+        "php": "^8.2|^8.3|^8.4",
+        "illuminate/support": "^10.0|^11.0|^12.0|^13.0",
+        "livewire/livewire": "^3.0|^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Nzoko\\Ninit\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Nzoko\\Ninit\\InstallerServiceProvider"
+            ]
+        },
+        "branch-alias": {
+            "dev-main": "1.x-dev"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

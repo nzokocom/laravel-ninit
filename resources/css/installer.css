@@ -1,0 +1,1185 @@
+/* ============================================================
+   Ninit — installer wizard
+   Visual language matches Krikkit: semantic tokens, Sora,
+   borders over shadows, pill controls, light/dark surfaces.
+   ============================================================ */
+
+:root {
+    --color-krikkit-fg: #1a1a1a;
+    --color-krikkit-fg-soft: #404040;
+    --color-krikkit-muted: #737373;
+    --color-krikkit-subtle: #a3a3a3;
+    --color-krikkit-canvas: #ffffff;
+    --color-krikkit-surface: #fafaf9;
+    --color-krikkit-soft: #f5f5f4;
+    --color-krikkit-line: #e7e5e4;
+    --color-krikkit-fill: #1a1a1a;
+    --color-krikkit-on-fill: #ffffff;
+    --color-accent: var(--theme-accent, #262626);
+    --color-accent-content: var(--theme-accent, #262626);
+    --color-accent-foreground: var(--theme-accent-foreground, #ffffff);
+    --color-ok: #16a34a;
+    --color-ok-soft: #f0fdf4;
+    --color-ok-line: #bbf7d0;
+    --color-ok-fg: #14532d;
+    --color-warn: #d97706;
+    --color-warn-soft: #fffbeb;
+    --color-warn-line: #fde68a;
+    --color-warn-fg: #78350f;
+    --color-danger: #dc2626;
+    --color-danger-soft: #fef2f2;
+    --color-danger-line: #fecaca;
+    --color-danger-fg: #7f1d1d;
+    --font-sans: 'Sora', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 0.75rem;
+    --radius-full: 9999px;
+}
+
+.dark {
+    --color-krikkit-fg: #fafafa;
+    --color-krikkit-fg-soft: #d4d4d4;
+    --color-krikkit-muted: #a3a3a3;
+    --color-krikkit-subtle: #737373;
+    --color-krikkit-canvas: #0a0a0a;
+    --color-krikkit-surface: #1a1a1a;
+    --color-krikkit-soft: #262626;
+    --color-krikkit-line: #262626;
+    --color-krikkit-fill: #ffffff;
+    --color-krikkit-on-fill: #1a1a1a;
+    --color-accent: var(--theme-accent-dark, #ffffff);
+    --color-accent-content: var(--theme-accent-dark, #ffffff);
+    --color-accent-foreground: var(--theme-accent-dark-foreground, #1a1a1a);
+    --color-ok-soft: rgba(22, 163, 74, 0.12);
+    --color-ok-line: rgba(22, 163, 74, 0.35);
+    --color-ok-fg: #bbf7d0;
+    --color-warn-soft: rgba(217, 119, 6, 0.12);
+    --color-warn-line: rgba(217, 119, 6, 0.35);
+    --color-warn-fg: #fde68a;
+    --color-danger-soft: rgba(220, 38, 38, 0.12);
+    --color-danger-line: rgba(220, 38, 38, 0.4);
+    --color-danger-fg: #fecaca;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    background-color: var(--color-krikkit-canvas);
+    color-scheme: light;
+}
+
+html.dark {
+    color-scheme: dark;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: var(--font-sans);
+    background: var(--color-krikkit-canvas);
+    color: var(--color-krikkit-fg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ============================================================
+   Shell — guest-style split
+   ============================================================ */
+
+.installer-page {
+    display: grid;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background: var(--color-krikkit-canvas);
+    font-family: var(--font-sans);
+}
+
+@media (min-width: 1024px) {
+    .installer-page {
+        grid-template-columns: minmax(20rem, 2fr) minmax(26rem, 3fr);
+    }
+}
+
+/* ============================================================
+   Sidebar
+   ============================================================ */
+
+.installer-sidebar {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 2.5rem;
+    padding: 2.5rem 2.5rem 2rem;
+    background: var(--color-krikkit-surface);
+    border-right: 1px solid var(--color-krikkit-line);
+    color: var(--color-krikkit-fg);
+}
+
+@media (min-width: 1024px) {
+    .installer-sidebar {
+        display: flex;
+    }
+}
+
+@media (min-width: 1280px) {
+    .installer-sidebar {
+        padding-left: 3.5rem;
+        padding-right: 3.5rem;
+    }
+}
+
+.installer-sidebar-top {
+    display: flex;
+    flex-direction: column;
+}
+
+.installer-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin-bottom: 3rem;
+    text-decoration: none;
+    color: inherit;
+}
+
+.installer-brand-logo {
+    display: block;
+    height: 2rem;
+    width: auto;
+    max-width: 10rem;
+    object-fit: contain;
+    object-position: left center;
+}
+
+.installer-brand-mark {
+    display: inline-flex;
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    background: var(--color-accent);
+    color: var(--color-accent-foreground);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+}
+
+.installer-brand-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    color: var(--color-krikkit-fg);
+}
+
+.installer-eyebrow {
+    margin: 0 0 1rem;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-krikkit-subtle);
+}
+
+.installer-tagline {
+    margin: 0;
+    max-width: 20rem;
+    font-size: 1.875rem;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: var(--color-krikkit-fg);
+}
+
+@media (min-width: 1280px) {
+    .installer-tagline {
+        font-size: 2.25rem;
+    }
+}
+
+.installer-accent-bar {
+    display: block;
+    width: 2.5rem;
+    height: 1px;
+    margin-top: 2rem;
+    background: var(--color-accent);
+}
+
+.installer-progress {
+    flex: 1;
+    min-height: 0;
+}
+
+.installer-progress-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.installer-progress-item {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.625rem;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: left;
+    color: var(--color-krikkit-muted);
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.installer-progress-item--current {
+    background: var(--color-krikkit-soft);
+    color: var(--color-krikkit-fg);
+}
+
+.installer-progress-item--past {
+    cursor: pointer;
+    color: var(--color-krikkit-muted);
+}
+
+.installer-progress-item--past:hover {
+    background: var(--color-krikkit-soft);
+    color: var(--color-krikkit-fg);
+}
+
+.installer-progress-item--future {
+    color: var(--color-krikkit-subtle);
+}
+
+.installer-progress-indicator {
+    display: inline-flex;
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: inherit;
+}
+
+.installer-progress-item--current .installer-progress-indicator {
+    color: var(--color-accent-content);
+}
+
+.installer-progress-item--past .installer-progress-indicator {
+    color: var(--color-accent-content);
+}
+
+.installer-progress-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ============================================================
+   Content
+   ============================================================ */
+
+.installer-content {
+    display: flex;
+    min-width: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    flex-direction: column;
+    background: var(--color-krikkit-canvas);
+}
+
+.installer-content-inner {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem 1.25rem;
+}
+
+@media (min-width: 640px) {
+    .installer-content-inner {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}
+
+.installer-panel {
+    width: 100%;
+    max-width: 36rem;
+    margin: 0 auto;
+}
+
+.installer-mobile-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin-bottom: 2rem;
+}
+
+@media (min-width: 1024px) {
+    .installer-mobile-brand {
+        display: none;
+    }
+}
+
+.installer-mobile-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .installer-mobile-meta {
+        display: none;
+    }
+}
+
+.installer-step-counter {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-krikkit-muted);
+}
+
+.installer-progress-dots {
+    display: flex;
+    gap: 0.375rem;
+}
+
+.installer-progress-dot {
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: var(--radius-full);
+    background: var(--color-krikkit-line);
+}
+
+.installer-progress-dot--past,
+.installer-progress-dot--current {
+    background: var(--color-accent);
+}
+
+.installer-progress-dot--future {
+    background: var(--color-krikkit-line);
+}
+
+/* ============================================================
+   Form + actions
+   ============================================================ */
+
+.installer-form {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+.installer-form-body {
+    flex: 1;
+}
+
+.installer-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-krikkit-line);
+}
+
+.installer-actions-end {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-left: auto;
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+
+.btn {
+    display: inline-flex;
+    height: 2.5rem;
+    min-height: 2.5rem;
+    max-height: 2.5rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0 1rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-full);
+    background: transparent;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.15s ease, background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-krikkit-fg) 15%, transparent);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+.btn--back {
+    border-color: var(--color-krikkit-line);
+    background: transparent;
+    color: var(--color-krikkit-fg);
+}
+
+.btn--back:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--color-krikkit-soft) 70%, transparent);
+}
+
+.btn--back svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+.btn--continue {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-accent-foreground);
+}
+
+.btn--continue:hover:not(:disabled) {
+    opacity: 0.9;
+}
+
+.btn--continue svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+.btn-text-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    opacity: 0.7;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   Section headings
+   ============================================================ */
+
+.section-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    color: var(--color-krikkit-fg);
+}
+
+.section-subtitle {
+    margin: 0.5rem 0 0;
+    font-size: 0.875rem;
+    line-height: 1.625;
+    color: var(--color-krikkit-muted);
+}
+
+.mb-6 {
+    margin-bottom: 2rem;
+}
+
+.mb-6 .section-subtitle {
+    margin-bottom: 0;
+}
+
+/* ============================================================
+   Check cards (requirements / permissions)
+   ============================================================ */
+
+.check-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+}
+
+@media (min-width: 768px) {
+    .check-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.check-item {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 0.875rem 1rem;
+    border: 1px solid var(--color-krikkit-line);
+    border-radius: var(--radius-xl);
+    background: var(--color-krikkit-surface);
+}
+
+.check-icon {
+    display: flex;
+    width: 1.75rem;
+    height: 1.75rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+}
+
+.check-icon svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+.check-icon--pass {
+    color: var(--color-ok);
+}
+
+.check-icon--fail {
+    color: var(--color-danger);
+}
+
+.check-info {
+    margin-left: 0.75rem;
+    min-width: 0;
+    flex: 1;
+}
+
+.check-label {
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-krikkit-fg);
+}
+
+.check-status {
+    margin: 0.125rem 0 0;
+    font-size: 0.75rem;
+    color: var(--color-krikkit-muted);
+}
+
+.check-hint {
+    margin: 0.25rem 0 0;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--color-krikkit-muted);
+}
+
+.check-badge {
+    margin-left: 0.75rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: var(--radius-full);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: var(--color-krikkit-muted);
+}
+
+.permission-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* ============================================================
+   Message cards — design surface, color only on the icon
+   ============================================================ */
+
+.msg-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    padding: 0.875rem 1rem;
+    border: 1px solid var(--color-krikkit-line);
+    border-radius: var(--radius-xl);
+    background: var(--color-krikkit-surface);
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--color-krikkit-fg-soft);
+}
+
+.msg-box-icon {
+    display: flex;
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.125rem;
+}
+
+.msg-box-icon svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.msg-box-icon--ok {
+    color: var(--color-ok);
+}
+
+.msg-box-icon--fail {
+    color: var(--color-danger);
+}
+
+/* ============================================================
+   Fields
+   ============================================================ */
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-krikkit-fg-soft);
+}
+
+.form-input,
+.form-select {
+    width: 100%;
+    height: 2.5rem;
+    padding: 0 1rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-full);
+    background: var(--color-krikkit-surface);
+    color: var(--color-krikkit-fg);
+    font-family: inherit;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    outline: none;
+    transition: border-color 0.15s ease;
+}
+
+.form-input::placeholder {
+    color: var(--color-krikkit-subtle);
+}
+
+.form-input:focus,
+.form-select:focus {
+    border-color: color-mix(in srgb, var(--color-krikkit-muted) 40%, transparent);
+}
+
+.form-input--error,
+.form-select.form-input--error {
+    border-color: color-mix(in srgb, var(--color-danger) 70%, transparent);
+}
+
+.form-input--error:focus {
+    border-color: var(--color-danger);
+}
+
+.form-error-text {
+    margin: 0.25rem 0 0;
+    font-size: 0.75rem;
+    color: var(--color-danger);
+}
+
+.form-input--with-icon {
+    padding-left: 2.25rem;
+}
+
+.form-input--with-icon-right {
+    padding-right: 2.75rem;
+}
+
+.form-input-wrapper {
+    position: relative;
+}
+
+.form-input-icon,
+.form-input-icon-right {
+    position: absolute;
+    top: 50%;
+    display: flex;
+    align-items: center;
+    color: var(--color-krikkit-subtle);
+    transform: translateY(-50%);
+}
+
+.form-input-icon {
+    left: 0.875rem;
+    pointer-events: none;
+}
+
+.form-input-icon svg,
+.form-input-icon-right svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+.form-input-icon-right {
+    right: 0.75rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+}
+
+.form-input-icon-right:hover {
+    color: var(--color-krikkit-fg);
+}
+
+.form-hint {
+    margin: 0.25rem 0 0;
+    font-size: 0.75rem;
+    color: var(--color-krikkit-muted);
+}
+
+.form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a3a3a3'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.875rem center;
+    background-size: 1rem;
+    padding-right: 2.5rem;
+}
+
+.form-select.form-input--with-icon {
+    padding-left: 2.25rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.form-grid .col-span-full {
+    grid-column: 1 / -1;
+}
+
+.form-divider {
+    padding-top: 1.5rem;
+    margin-top: 0.25rem;
+    border-top: 1px solid var(--color-krikkit-line);
+}
+
+/* ============================================================
+   Toggle / switch
+   ============================================================ */
+
+.toggle-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    cursor: pointer;
+}
+
+.toggle-input {
+    width: 1rem;
+    height: 1rem;
+    margin-top: 0.2rem;
+    flex-shrink: 0;
+    accent-color: var(--color-accent);
+}
+
+.toggle-text {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-krikkit-fg);
+}
+
+.toggle-desc {
+    display: block;
+    margin-top: 0.125rem;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--color-krikkit-muted);
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-flex;
+    width: 2.75rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+    align-items: center;
+    cursor: pointer;
+}
+
+.toggle-track {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-full);
+    background: var(--color-krikkit-line);
+    transition: background-color 0.15s ease;
+}
+
+.toggle-track--active {
+    background: var(--color-accent);
+}
+
+.toggle-thumb {
+    position: absolute;
+    left: 0.125rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: var(--radius-full);
+    background: var(--color-krikkit-canvas);
+    transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.toggle-thumb--active {
+    transform: translateX(1.25rem);
+    background: var(--color-accent-foreground);
+}
+
+/* ============================================================
+   Radio cards
+   ============================================================ */
+
+.radio-card {
+    position: relative;
+    display: flex;
+    padding: 1rem;
+    border: 1px solid var(--color-krikkit-line);
+    border-radius: var(--radius-xl);
+    background: var(--color-krikkit-surface);
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+}
+
+.radio-card:hover {
+    border-color: color-mix(in srgb, var(--color-krikkit-muted) 40%, transparent);
+}
+
+.radio-card--selected {
+    border-color: var(--color-accent);
+}
+
+.radio-card-input {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+}
+
+.radio-card-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+.radio-card-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-krikkit-fg);
+}
+
+.radio-card-desc {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: var(--color-krikkit-muted);
+}
+
+.radio-card-check {
+    display: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-left: 0.5rem;
+    flex-shrink: 0;
+    color: var(--color-accent-content);
+}
+
+.radio-card--selected .radio-card-check {
+    display: block;
+}
+
+.radio-card img {
+    width: 100%;
+    height: 8rem;
+    margin-bottom: 0.75rem;
+    object-fit: cover;
+    border: 1px solid var(--color-krikkit-line);
+    border-radius: var(--radius-sm);
+}
+
+/* ============================================================
+   Connection test / help
+   ============================================================ */
+
+.test-connection-btn {
+    padding: 0;
+    border: 0;
+    background: none;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-krikkit-muted);
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.test-connection-btn:hover {
+    color: var(--color-krikkit-fg);
+}
+
+/* ============================================================
+   Migration card
+   ============================================================ */
+
+.migration-card {
+    padding: 1.25rem;
+    border: 1px solid var(--color-krikkit-line);
+    border-radius: var(--radius-xl);
+    background: var(--color-krikkit-surface);
+}
+
+.migration-card-icon {
+    display: flex;
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    background: var(--color-accent);
+    color: var(--color-accent-foreground);
+}
+
+.migration-card-icon svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+.migration-card-heading {
+    margin: 0 0 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-krikkit-fg);
+}
+
+.migration-card-desc {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.625;
+    color: var(--color-krikkit-muted);
+}
+
+.help-toggle {
+    padding: 0;
+    border: 0;
+    background: none;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-krikkit-muted);
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.help-toggle:hover {
+    color: var(--color-krikkit-fg);
+}
+
+.help-box {
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-krikkit-line);
+    border-radius: var(--radius-xl);
+    background: var(--color-krikkit-surface);
+    color: var(--color-krikkit-fg-soft);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.help-box p {
+    margin: 0.25rem 0;
+}
+
+/* ============================================================
+   Password meter
+   ============================================================ */
+
+.pw-meter {
+    display: flex;
+    gap: 0.25rem;
+    margin-top: 0.375rem;
+}
+
+.pw-meter-bar {
+    height: 0.25rem;
+    flex: 1 1 0%;
+    border-radius: var(--radius-full);
+    background: var(--color-krikkit-line);
+    transition: background-color 0.2s ease;
+}
+
+.pw-meter-bar.is-filled.score-weak { background: var(--color-danger); }
+.pw-meter-bar.is-filled.score-fair { background: var(--color-warn); }
+.pw-meter-bar.is-filled.score-strong { background: var(--color-ok); }
+
+.pw-meter-label {
+    margin: 0.25rem 0 0;
+    font-size: 0.75rem;
+}
+
+.pw-meter-label.score-weak { color: var(--color-danger); }
+.pw-meter-label.score-fair { color: var(--color-warn); }
+.pw-meter-label.score-strong { color: var(--color-ok); }
+
+.pw-mismatch {
+    margin: 0.25rem 0 0;
+    font-size: 0.75rem;
+    color: var(--color-danger);
+}
+
+/* ============================================================
+   Success
+   ============================================================ */
+
+.installer-success {
+    text-align: left;
+}
+
+.installer-success-mark {
+    display: inline-flex;
+    width: 2.5rem;
+    height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-accent);
+    color: var(--color-accent-foreground);
+}
+
+.installer-success-mark svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.installer-success-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    color: var(--color-krikkit-fg);
+}
+
+.installer-success-copy {
+    margin: 0.5rem 0 2rem;
+    font-size: 0.875rem;
+    line-height: 1.625;
+    color: var(--color-krikkit-muted);
+}
+
+/* ============================================================
+   Step enter
+   ============================================================ */
+
+.installer-step-enter {
+    transition: opacity 0.2s ease-out;
+}
+
+.installer-step-enter-start {
+    opacity: 0;
+}
+
+.installer-step-enter-end {
+    opacity: 1;
+}
+
+/* ============================================================
+   Spacing helpers used by step views
+   ============================================================ */
+
+.mb-4 { margin-bottom: 1rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-6 { margin-top: 1.5rem; }
+.ml-3 { margin-left: 0.75rem; }
+.ml-4 { margin-left: 1rem; }
+.ml-5 { margin-left: 1.25rem; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; }
+.gap-6 { gap: 1.5rem; }
+.flex { display: flex; }
+.inline-flex { display: inline-flex; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.justify-between { justify-content: space-between; }
+.flex-col { flex-direction: column; }
+.flex-1 { flex: 1; }
+.flex-shrink-0 { flex-shrink: 0; }
+.text-center { text-align: center; }
+
+@media (min-width: 768px) {
+    .md\:flex-row { flex-direction: row; }
+}
+
+@media (max-width: 639px) {
+    .installer-actions {
+        flex-wrap: wrap;
+    }
+
+    .installer-actions .btn--continue {
+        margin-left: auto;
+    }
+}
